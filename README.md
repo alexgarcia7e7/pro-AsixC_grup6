@@ -135,9 +135,18 @@ Atès que l'aigua danyaria irreversiblement el maquinari actiu, la sala està eq
 ### Vista interior del CPD
 <img width="1024" height="514" alt="image" src="https://github.com/user-attachments/assets/860ef679-1932-44f0-ae1f-2244c96c358d" />
 
+## Prevenció de Riscos Laborals (PRL) al CPD
 
+La seguretat, la salut i la integritat física del personal tècnic que opera i realitza tasques de manteniment dins del CPD de **Innovate Tech** és una prioritat absoluta. Ateses les condicions particulars d'una sala de servidors (risc elèctric, càrrega tèrmica, soroll continu i ús de gasos d'extinció), s'apliquen de manera estricta les següents mesures de prevenció:
 
-
+| Mesura de Prevenció | Il·lustració | Descripció Detallada |
+| :--- | :---: | :--- |
+| **Procediment LOTO** | <img width="235" height="150" alt="image" src="https://github.com/user-attachments/assets/852d5dd8-ed81-4ed6-8305-7ec4589e87b4" /> | **Aïllament Elèctric Segur:** Protocol obligatori de bloqueig/etiquetatge (*Lockout/Tagout*) abans de qualsevol intervenció a les línies de distribució elèctrica o PDUs. El tècnic bloqueja físicament el tall d'energia amb un cadenat personalitzat i una targeta d'avís per evitar que es restableixi el corrent accidentalment. |
+| **Formació en Emergències** | <img width="126" height="175" alt="Captura de pantalla de 2026-05-21 12-56-23" src="https://github.com/user-attachments/assets/aded3901-969a-410c-bb0d-2af9412ae5ef" /> | **Simulacres i Evacuació:** Formació periòdica sobre protocols d'actuació i reconeixement de l'alarma acústica/visual de pre-avís del sistema d'extinció per gas **FK-5-1-12**, assegurant que els operadors sàpiguen que disposen d'un marge de temps segur per evacuar la sala. |
+| **Protecció Auditiva** | <img width="119" height="136" alt="Captura de pantalla de 2026-05-21 12-58-49" src="https://github.com/user-attachments/assets/65002e6a-fb8e-4128-b3c2-6aa75c5d88ea" /> | **Ús Obligatori d'EPIs:** Senyalització de la sala per a la permanència prolongada. Es posen a disposició dels tècnics protectors auditius (taps o orelleres d'atenuació) a l'entrada del recinte per evitar la fatiga acústica. |
+| **Gestió del Soroll** | <img width="160" height="60" alt="Captura de pantalla de 2026-05-21 12-58-55" src="https://github.com/user-attachments/assets/e8f48602-51ba-4f13-a4a8-f8c0b18cc22b" /> | **Monitorització i Atenuació:** Control continu dels nivells de decibels generats pels ventiladors d'alta pressió dels servidors i els sistemes de climatització per assegurar un entorn de treball salubre. |
+| **Espais de Pas i Il·luminació** | <img width="102" height="93" alt="Captura de pantalla de 2026-05-21 13-14-43" src="https://github.com/user-attachments/assets/948e7204-6d2b-4c3b-94f0-4dce2d2f6744" />| **Vies d'Evacuació i Visibilitat:** Els passadissos (inclòs el passadís fred) es mantenen 100% lliures d'obstacles per garantir una evacuació ràpida. S'instal·len panells LED d'alta uniformitat per reduir la fatiga visual durant la manipulació de components de precisió. |
+| **Primers Auxilis** |<img width="102" height="93" alt="Captura de pantalla de 2026-05-21 13-14-43" src="https://github.com/user-attachments/assets/037f2406-7082-4105-9de0-dbbc0253ae18" />| **Equipament d'Emergència:** Armari de primers auxilis clarament visible i senyalitzat amb material específic per a cremades lleus i talls, recolzat per personal de l'empresa format en reanimació cardiopulmonar (RCR). |
 
 
 
