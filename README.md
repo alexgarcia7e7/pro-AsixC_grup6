@@ -148,7 +148,32 @@ La seguretat, la salut i la integritat física del personal tècnic que opera i 
 | **Espais de Pas i Il·luminació** | <img width="102" height="93" alt="Captura de pantalla de 2026-05-21 13-14-43" src="https://github.com/user-attachments/assets/948e7204-6d2b-4c3b-94f0-4dce2d2f6744" />| **Vies d'Evacuació i Visibilitat:** Els passadissos (inclòs el passadís fred) es mantenen 100% lliures d'obstacles per garantir una evacuació ràpida. S'instal·len panells LED d'alta uniformitat per reduir la fatiga visual durant la manipulació de components de precisió. |
 | **Primers Auxilis** |<img width="102" height="93" alt="Captura de pantalla de 2026-05-21 13-14-43" src="https://github.com/user-attachments/assets/037f2406-7082-4105-9de0-dbbc0253ae18" />| **Equipament d'Emergència:** Armari de primers auxilis clarament visible i senyalitzat amb material específic per a cremades lleus i talls, recolzat per personal de l'empresa format en reanimació cardiopulmonar (RCR). |
 
+## 1.5 Sostenibilitat i Eficiència Energètica
 
+L'objectiu prioritari del CPD de **Innovate Tech** és establir un model d'infraestructura d'alta disponibilitat que minimitzi l'impacte ambiental. Per aconseguir-ho, s'integren tecnologies d'optimització física, lògica i de subministrament energètic basades en els següents pilars:
+
+### Monitorització i Consolidació Lògica
+* **Control del PUE:** S'implementa una monitorització constant de l'eficiència en l'ús de l'energia (*Power Usage Effectiveness*), amb l'objectiu de mantenir un ràtio ideal **<1.4** mitjançant sensors intel·ligents de cabal i temperatura.
+* **Virtualització Avançada:** S'aprofita al màxim la consolidació de càrregues de treball utilitzant els hipervisors **Proxmox VE** i **VMware ESXi**. Això permet reduir el *footprint* físic de la sala a només dos racks i optimitzar el consum elèctric per cada instància o servei de streaming de la companyia.
+* **Polítiques de Power Capping i vMotion:** Els servidors utilitzen funcions de *Power Capping* per limitar de forma programada els pics de consum inesperats. A més, s'executen migracions en calent (*vMotion*) per reequilibrar les màquines virtuals, la qual cosa permet apagar o posar en estat de baix consum els nodes físics ociosos durant les hores de menor demanda de xarxa.
+
+### Subministrament d'Energia Verda
+* **Autoconsum Fotovoltaic:** S'integra un sistema de panells solars a la coberta de l'edifici orientat a cobrir una part significativa de la demanda elèctrica diürna del CPD, reduint dràsticament la dependència directa de la xarxa elèctrica comercial.
+* **Contractació Renovable Certificada (PPA):** Per al diferencial de potència que no es pugui cobrir amb les plaques solars, es contracta el subministrament mitjançant acords PPA (*Power Purchase Agreement*) amb comercialitzadores que garanteixen un origen 100% renovable (eòlica, hidràulica o solar) recolzat per certificacions oficials de *Green Energy*.
+
+### Disseny Físic i Arquitectura de Cablejat
+* **Estalvi en Longitud de Cable:** La distribució acurada dels equips actius i dels *Patch Panels* dins dels dos racks es planifica per minimitzar la longitud necessària del cablejat de coure i fibra òptica, evitant pèrdues per atenuació i reduint l'ús de materials.
+* **Backbone de Fibra Òptica:** S'utilitza de forma prioritària la fibra òptica per a les connexions de *backbone* inter-rack i enllaços d'alta velocitat cap al *core*. Això no només millora el rendiment i el rendiment per watt, sinó que disminueix el volum de coure utilitzat, material que presenta un impacte ambiental molt més elevat en la seva cadena de producció.
+
+### Climatització Tèrmica i Circulació d'Aire
+* **Contenció de Passadís Fred (CAC):** El disseny mecànic de la sala tanca completament el passadís on els servidors aspiren l'aire fresc generat pels climatitzadors. Això evita de forma radical que l'aire fred es barregi amb el flux d'aire calent expulsat per la part posterior dels racks, maximitzant el rendiment tèrmic del sistema.
+* **Tecnologia Free Cooling:** El sistema de climatització reaprofita de forma intel·ligent les temperatures exteriors quan les condicions ambientals ho permeten. El refredament natural redueix al mínim les hores de funcionament dels compressors mecànics de l'aire condicionat, disminuint el consum elèctric global de la infraestructura.
+
+### Hardware i Components d'Alta Eficiència
+* **Electrònica de Xarxa Intel·ligent (EEE):** Els switches del CPD es configuren amb el protocol *Energy Efficient Ethernet* (**IEEE 802.3az**), el qual disminueix automàticament l'energia subministrada als ports de xarxa que estiguin en períodes d'inactivitat o baixa utilització de trànsit.
+* **Fonts d'Alimentació Platinum i Titanium:** Tots els servidors de producció equipen fonts d'alimentació redundants amb certificació **80 Plus Platinum o Titanium**, garantint una eficiència de conversió elèctrica superior al 94%.
+* **Processadors i Emmagatzematge d'Alta Eficiència per Watt:** La selecció de processadors de la gamma **Intel Xeon Silver** equilibra la potència de càlcul amb la dissipació tèrmica. Al mateix temps, l'ús exclusiu d'unitats d'estat sòlid (**SSD**) redueix el consum en comparació amb els discos mecànics clàssics i disminueix la necessitat de refrigeració interna de les cabines.
+* **Certificació Energy Star:** Qualsevol equipament informàtic i elèctric de nova adquisició implementat al CPD (servidors, switches, SAIs o elements de monitorització) compta amb aquest segell regulador d'alta eficiència energètica.
 
 
 
