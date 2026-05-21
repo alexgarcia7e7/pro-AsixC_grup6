@@ -132,6 +132,52 @@ Atès que l'aigua danyaria irreversiblement el maquinari actiu, la sala està eq
 ### Vista exterior del CPD
 <img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/bcd3678b-f436-44f6-91a3-c32de7a6f321" />
 
+## 1.4 Seguretat Física
+
+La protecció dels actius materials i de la infraestructura de dades de **Innovate Tech** es basa en l'establiment de perímetres de seguretat concèntrics per mitigar riscs d'intrusisme, sabotatge o catàstrofes ambientals a la sala de servidors.
+
+### Control d'Accés de Doble Factor (2FA)
+
+L'entrada a la sala de racks està restringida exclusivament al personal tècnic autoritzat mitjançant un sistema d'autenticació obligatori de doble factor:
+* **Primer Factor (Posseïdor):** Lector de targetes electromagnètiques de proximitat amb tecnologia encriptada **RFID Mifare Desfire EV3**.
+* **Segon Factor (Biometria):** Lector d'empremta dactilar d'alta resolució amb detecció de pols viu per evitar falsificacions.
+* **Registre d'Auditoria:** Totes les obertures, intents fallits i temps de permanència queden registrats de forma inalterable en una base de dades centralitzada del sistema de control d'accessos, blindada contra modificacions.
+
+### Sistemes de Videovigilància (CCTV)
+
+La sala disposa de càmeres de seguretat IP amb resolució 4K i visió nocturna per infrarojos. Es col·loquen de manera estratègica per cobrir l'angle de visió de l'accés principal, així com els passadissos frontal i posterior dels armaris rack. L'enregistrament de les imatges es realitza en un gravador de xarxa (NVR) dedicat i aïllat, que manté un històric de gravacions de 30 dies sota custòdia segons la normativa vigent de protecció de dades.
+
+### Prevenció i Protecció Contra Incendio
+
+Atès que l'aigua danyaria irreversiblement el maquinari actiu, la sala està equipada amb un sistema d'extinció automàtica mitjançant inundació de **gas net (mecanisme Agent Net FK-5-1-12)**. 
+* **Funcionament:** En detectar fum o un increment anòmal de temperatura mitjançant els sensors òptics i tèrmics creuats, el sistema activa una alarma acústica de pre-avís per a l'evacuació del personal i, posteriorment, injecta el gas a la sala. Aquest compost extingeix el foc per refredament tèrmic a nivell molecular sense reduir l'oxigen dràsticament i sense deixar cap mena de residu conductor ni corrosiu sobre els circuits dels servidors.
+
+### Vista exterior del CPD
+<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/0880f022-a5ee-4732-9172-f67748662547" />
+
+### Vista interior del CPD
+<img width="1024" height="514" alt="image" src="https://github.com/user-attachments/assets/860ef679-1932-44f0-ae1f-2244c96c358d" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # 3. Disseny i Implementació de la Base de Dades
 
