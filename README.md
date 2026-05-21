@@ -61,3 +61,50 @@ La disposició dels panells de parxeig s'ha dissenyat adjacents als elements de 
 * **Administració Local (KVM):** S'integra a la unitat superior (**U41/U42**) un commutador KVM amb pantalla desplegable per permetre que els tècnics puguin interactuar físicament i fer tasques de diagnòstic i manteniment *in situ* sobre els servidors sense requerir una connexió de xarxa externa activa.
 * **Consideracions de Pes i Balanç Mecànic:** Els components de major densitat i massa, com els mòduls de **SAI Redundant (A i B) de 2U**, s'ubiquen de forma obligatòria a la base més baixa de l'armari (unitats de la U01 a la U06). Els servidors Blade/Rack de producció (Servidor 1 i Servidor 2) i els de backup (NAS/SAN i Servidor Web) es posicionen a la zona central-mitjana del perfil de càrrega. Aquesta disposició manté el centre de gravetat global de l'armari a la part inferior, garantint una estabilitat estructural perfecta contra vibracions o possibles desplaçaments accidentals.
 * **Fixació del Cablejat:** Totes les agrupacions de cables es peinen manualment i se subjecten exclusivament mitjançant **brides de velcro tècnic**, respectant un radi de curvatura mínim per evitar l'estrangulació del dielèctric dels cables de coure de categoria 6a.
+
+## 1.3 Infraestructura Elèctrica: Dimensionament del SAI
+
+El disseny elèctric del centre de dades de **Innovate Tech** s'ha calculat per garantir l'alta disponibilitat, la redundància de línia i la immunitat davant de pertorbacions de la xarxa elèctrica externa (sobretensions, pics de corrent o talls de subministrament). Per fer-ho, es disposa d'una arquitectura d'alimentació doble (Línia A i Línia B) on cada rack es nodreix d'un sistema independent de **Sistemes d'Alimentació Ininterrompuda (SAI)** de tecnologia Online de doble conversió.
+
+### Inventari de Consum Elèctric (Estudi de Càrregues)
+
+Per dimensionar correctament la capacitat dels SAI, s'estableix el consum nominal mitjà dels equips actius instal·lats en ambdós armaris rack:
+
+| Component Maquinari | Quantitat | Consum Unitari Nominals (W) | Consum Total Atansat (W) |
+| :--- | :---: | :---: | :---: |
+| Servidor HPE ProLiant DL380 Gen10 (Rack 1) | 2 | 450 W | 900 W |
+| Servidor Dell PowerEdge R540 (Rack 2) | 2 | 350 W | 700 W |
+| Switch Principal Cisco Catalyst C9200L (Rack 1) | 1 | 100 W | 100 W |
+| Switch de Backup Cisco Catalyst C1000L (Rack 2) | 1 | 30 W | 30 W |
+| Unitat Central KVM i Pantalles de Gestió | 2 | 40 W | 80 W |
+| **Càrrega Nominal Total Activa ($P_{total}$)** | - | - | **1.810 W** |
+
+### Càlcul de la Potència Requerida del SAI
+
+Per fer la transició de la potència activa calculada en Watts ($W$) cap a la potència aparent que defineix la capacitat de treball d'un SAI en Voltamperis ($VA$), s'aplica el factor de potència típic de les fonts d'alimentació informàtiques modernes amb correcció activa ($f_p = 0,9$).
+
+A més, seguint les recomanacions de la normativa **TIA-942**, s'afegeix un **marge de seguretat i futur creixement del 25%** ($\text{Marge} = 1,25$) per evitar que el sistema operi prop del llindar de sobrecàrrega i permetre l'addició de nous nodes informàtics a mitjà termini.
+
+La fórmula utilitzada per determinar la potència aparent mínima és:
+
+$$S_{mínima} = \frac{P_{total} \cdot \text{Marge}}{f_p}$$
+
+Substituint els valors calculats en l'estudi de càrregues:
+
+$$S_{mínima} = \frac{1.810 \text{ W} \cdot 1,25}{0,9} = \frac{2.262,5}{0,9} \approx 2.514 \text{ VA}$$
+
+### Selecció i Justificació del Model de SAI
+
+Donat que la càrrega crítica total del projecte requereix un mínim de $2.514 \text{ VA}$ distribuïts en configuració redundant per donar servei a les línies A i B de tots dos armaris, es justifica la implementació dels mòduls ja previstos en l'esquema físic: **APC Smart-UPS X 2200VA** en paral·lel per a cada armari.
+
+* **Capacitat Total Instal·lada:** Cada armari disposa de dues unitats APC de 2200VA cadascuna (aportant un total de 4400VA per bastidor). Això garanteix que, en condicions normals, els SAI treballen a un règim del **41% de la seva capacitat màxima**, un punt òptim que maximitza l'eficiència energètica de l'inversor i redueix l'estrès tèrmic dels components interns.
+* **Redundància:** L'arquitectura opera en mode tolerant a fallades. Si un dels SAI s'ha de desconnectar per manteniment o pateix una avaria en les seves bateries, l'altre mòdul de la línia bessona assumeix immediatament el 100% de la línia de càrrega elèctrica sense cap mil·lisegon de tall (temps de transferència de 0 ms gràcies a la tecnologia *Double-Conversion Online*).
+
+### Càlcul d'Autonomia i Gestió d'Apagat Net
+
+Amb una corba de descàrrega típica del model seleccionat funcionant a mitja càrrega (uns 905 W per armari), el banc de bateries integrat de plom-àcid segellat (AGM) garanteix una **autonomia d'emergència de 22 minuts**.
+
+Aquest temps d'autonomia es distribueix seguint el protocol de seguretat operacional de l'empresa:
+1. **Minuts 0 a 5 (Fase d'Espera):** El sistema es manté operant amb normalitat a l'espera que el subministrament elèctric de la xarxa pública es restableixi de forma automàtica.
+2. **Minuts 5 a 15 (Alerta i Pre-apagat):** Es disparen els dimonis de gestió de l'UPS a través de la xarxa (*PowerChute Network Shutdown*). Es bloquegen les noves connexions d'usuaris externs i es comença la migració o tancament dels serveis no crítics.
+3. **Minuts 15 a 20 (Apagat Net / Clean Shutdown):** S'envia l'ordre de tancament segur a les màquines virtuals de producció, seguit de l'apagat dels hipervisors dels servidors HPE i Dell, evitant així la corrupció dels sistemes de fitxers de les bases de dades i pèrdues d'informació a les cabines d'emmagatzematge.
