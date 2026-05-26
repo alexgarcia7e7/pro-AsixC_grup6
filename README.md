@@ -177,7 +177,51 @@ L'objectiu prioritari del CPD de **Innovate Tech** és establir un model d'infra
 
 
 
+## 1.7 Investigar i Comparar: Solucions Cloud i Sostenibilitat
 
+Per avaluar l'eficiència energètica i les solucions de CPD en el núvol (estructures gestionades i de contingut), s'ha realitzat una investigació i comparativa tècnica d'**AWS** en relació amb els altres dos proveïdors líders del mercat global: **Microsoft Azure** i **Google Cloud Platform (GCP)**.
+
+### Criteris Tècnics de Comparació
+
+* **PUE (Power Usage Effectiveness):** Indicador de l'eficiència de l'ús de l'energia al CPD. Com més proper a 1.0, major és el percentatge elèctric destinat exclusivament a la potència de càlcul.
+* **Ús d'Energies Renovables:** Percentatge real de subministrament provinent de fonts netes i projectes d'autoconsum lligats als seus centres de dades.
+* **Certificacions i Eines de Gestió del Carboni:** Utilitats i panells (*dashboards*) operatius que els proveïdors posen a disposició de l'usuari per monitoritzar l'empremta de CO₂ dels seus serveis actius.
+* **Solucions de CPD Administrats (Managed Services):** Capacitat per absorbir requeriments crítics de seguretat física, lògica, elasticitat i alta disponibilitat de xarxa per al nostre desplegament.
+
+---
+
+### Anàlisi per Proveïdor
+
+#### 1. AWS (Amazon Web Services) — *Solució Seleccionada*
+* **Mètriques PUE:** Registra valors d'eficiència d'entre **1.1 i 1.2** en els seus centres de dades més recents, amb un full de ruta per assolir de manera generalitzada un ràtio de 1.05.
+* **Energia Renovable:** Assoliment del **100% d'energia renovable** en les seves operacions globals (fomentat per grans acords de PPAs solars i eòlics).
+* **Innovació i Certificacions:** Membre de la *Clean Energy Buyers Alliance* (CEBA) i el *Green Power Partnership*. Destaca el disseny de xips propis d'alta eficiència (**AWS Graviton**) que redueixen dràsticament el consum elèctric per a entorns de computació.
+* **Eines de Petjada de Carboni:** Integra la utilitat **AWS Carbon Footprint Tool**, ideal perquè l'equip d'administració de *Innovate Tech* auditi l'impacte d'emissions derivat de la computació i emmagatzematge.
+* **Serveis Administrats del CPD:** Ofereix un ecosistema madur de màxima resiliència (EC2, S3, RDS, VPC) amb una xarxa perimetral global dissenyada específicament per a tasques d'alta demanda de xarxa.
+
+#### 2. Microsoft Azure
+* **Mètriques PUE:** Registra ràtios de PUE per sota de **1.25** a la seva xarxa d'infraestructures, invertint regularment en recerca de sistemes de refrigeració líquida i per immersió.
+* **Energia Renovable:** Objectiu del 100% d'energia verda plenament operatiu amb grans fons de finançament per a la descarbonització.
+* **Innovació i Certificacions:** Posicionat fortament en auditories sectorials com la **ISO 50001** (Sistemes de Gestió Energètica) i estàndards de sostenibilitat LEED.
+* **Eines de Petjada de Carboni:** Compta amb el portal **Microsoft Cloud for Sustainability** i eines integrades a l'*Azure Cost Management* per auditar el consum de l'arquitectura.
+* **Serveis Administrats del CPD:** Sòlida alternativa en configuracions IaaS i PaaS (Azure VMs, SQL Database), recolzada per una forta capa de certificacions globals de compliment de seguretat.
+
+#### 3. Google Cloud Platform (GCP)
+* **Mètriques PUE:** Líder de la indústria amb mitjanes globals de PUE de **1.1**, aconseguint ràtios inferiors gràcies a l'aplicació d'intel·ligència artificial (Machine Learning) aplicada al control dinàmic de la climatització.
+* **Energia Renovable:** Opera amb un model de compensació del 100% d'energies renovables, amb el ferm compromís d'assolir energia completament lliure de carboni les 24 hores del dia, els 7 dies de la setmana per a l'any 2030.
+* **Innovació i Certificacions:** Pioner en l'optimització de data centers mitjançant algorismes de DeepMind i membre actiu de l'aliança global RE100.
+* **Eines de Petjada de Carboni:** Disposa del panell **Carbon Footprint** directament a la consola de GCP amb mètriques en temps real del projecte, a més d'alertes automatitzades (*Active Assist*) per eliminar recursos inactius.
+* **Serveis Administrats del CPD:** Enfocament natiu en tecnologies de contenidors (GKE), emmagatzematge massiu d'objectes (Cloud Storage) i una xarxa global de fibra òptica d'alta velocitat.
+
+---
+
+### Conclusió i Justificació de la Selecció d'AWS
+
+Tot i que els tres *hyperscalers* presenten compromisos mediambientals excel·lents i infraestructures altament eficients, l'elecció d'**AWS** com a proveïdor per al desplegament híbrid de **Innovate Tech** es justifica plenament sota els següents criteris clau:
+
+1. **Ecosistema Multimedia i Streaming:** AWS compta amb serveis especialitzats i madurs que són el nucli de la nostra activitat de contingut digital, com ara **AWS Elemental MediaServices** i la xarxa de distribució de contingut de baixa latència **AWS CloudFront (CDN)**.
+2. **Eficiència de Computació:** La presència d'instàncies basades en arquitectura **Graviton** ens permet llogar capacitats de càlcul cloud amb fins a un 60% menys de consum energètic respecte a les arquitectures de processadors tradicionals.
+3. **Robustesa en Seguretat Administrada:** AWS encapsula i gestiona directament tots els requisits de seguretat física dels seus centres de dades (controls d'accés biomètric, vigilància 24/7) i lògica (aïllament per defecte a nivell d'hipervisor), garantint el compliment automàtic de normatives internacionals crítiques com la **ISO 27001**, **SOC 2** i **PCI-DSS**.
 
 
 
