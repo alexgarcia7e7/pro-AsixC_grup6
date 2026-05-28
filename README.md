@@ -214,8 +214,6 @@ L'objectiu prioritari del CPD de **Innovate Tech** és establir un model d'infra
 * **Processadors i Emmagatzematge d'Alta Eficiència per Watt:** La selecció de processadors de la gamma **Intel Xeon Silver** equilibra la potència de càlcul amb la dissipació tèrmica. Al mateix temps, l'ús exclusiu d'unitats d'estat sòlid (**SSD**) redueix el consum en comparació amb els discos mecànics clàssics i disminueix la necessitat de refrigeració interna de les cabines.
 * **Certificació Energy Star:** Qualsevol equipament informàtic i elèctric de nova adquisició implementat al CPD (servidors, switches, SAIs o elements de monitorització) compta amb aquest segell regulador d'alta eficiència energètica.
 
-
-
 ## 1.7 Investigar i Comparar: Solucions Cloud i Sostenibilitat
 
 Per avaluar l'eficiència energètica i les solucions de CPD en el núvol (estructures gestionades i de contingut), s'ha realitzat una investigació i comparativa tècnica d'**AWS** en relació amb els altres dos proveïdors líders del mercat global: **Microsoft Azure** i **Google Cloud Platform (GCP)**.
@@ -263,6 +261,95 @@ Tot i que els tres *hyperscalers* presenten compromisos mediambientals excel·le
 3. **Robustesa en Seguretat Administrada:** AWS encapsula i gestiona directament tots els requisits de seguretat física dels seus centres de dades (controls d'accés biomètric, vigilància 24/7) i lògica (aïllament per defecte a nivell d'hipervisor), garantint el compliment automàtic de normatives internacionals crítiques com la **ISO 27001**, **SOC 2** i **PCI-DSS**.
 
 
+##2 Implantació dels serveis d'àudio i vídeo
+# Integració de Serveis de Streaming i Videoconferència a AWS
+
+## 1. Introducció i Objectius
+
+En aquest projecte final hem dut a terme el disseny, desplegament i configuració de la infraestructura multimèdia per a la nostra solució d'integració de sistemes. L'objectiu principal ha estat aixecar, sobre una única instància virtual d'Ubuntu Server allotjada a Amazon Web Services (AWS EC2), dos serveis de comunicació totalment operatius i integrats: un servidor web de reproducció de vídeo (Streaming Estàtic) i una plataforma de comunicació en temps real (Videoconferència).
+
+## 2. Arquitectura Final dels Serveis
+
+Per optimitzar els recursos de la instància i evitar conflictes de ports, hem implementat un model d'arquitectura dual on un únic servidor web gestiona el tràfic de xarxa de forma eficient i redirigeix les peticions de l'usuari segons el recurs sol·licitat:
+
+Vídeo Web (Streaming Estàtic): Gestionat per Nginx a través del port TCP 80 (HTTP). Serveix el fitxer corporatiu del projecte ubicat a la ruta pública del servidor.
+
+Per pujar el video al servidor de AWS hem fet servir la comanda scp per pujarlo a partir de la ip publica del servidor. Ens hem descarregat l’arxiu en la màquina local i l’hem pujat.
+
+<img width="598" height="76" alt="image" src="https://github.com/user-attachments/assets/687fb6b2-13c3-45f8-8729-72b8f7625378" />
+
+
+
+Videoconferència en Temps Reial: Gestionat per Jitsi Meet a través del port TCP 443 (HTTPS) per a les connexions xifrades, enllaçant els usuaris a sales virtuals mitjançant el protocol WebRTC.
+
+## 3. Evolució del Desplegament i Resolució d'Incidències
+
+L'Error de Disseny Inicial: Servidors de Streaming Dedicats
+
+Durant la fase inicial de planificació del projecte, vam cometre l'error d'intentar instal·lar i configurar un programari de streaming complex i dedicat (com ara servidors RTMP o plataformes de streaming de tercers) per a la reproducció del vídeo a la web. Això ens va generar problemes greus de compatibilitat de paquets, bloquejos de ports de xarxa i un consum innecessari de memòria RAM que comprometia l'estabilitat de la nostra instància d'AWS EC2, la qual disposa de recursos limitats.
+
+Aquest es el programa del que parlem, jellyfin.
+
+<img width="554" height="506" alt="image" src="https://github.com/user-attachments/assets/4f6e1c4f-bfdb-4d4a-85b2-20459f331039" />
+
+
+La Solució Eficient: Nginx + Transmissió Nativa HTML5
+
+Després d'analitzar la incidència, vam adonar-nos que per transmetre el vídeo del projecte (video_empresa.mp4) no necessitàvem cap programari addicional d'alta complexitat. Els navegadors moderns són capaços de reproduir fitxers multimèdia de forma nativa mitjançant les etiquetes d'HTML5 si el servidor web els serveix de manera correcta.
+
+Per tant, vam desinstal·lar completament el programari conflictiu i vam optar per aprofitar el servidor Nginx que ja teníem instal·lat per al projecte. Vam col·locar el fitxer de vídeo a la ruta pública del servidor i vam dissenyar una estructura web neta. Nginx actua com un motor de transferència de dades ultralleuger, enviant el vídeo per paquets (streaming de descàrrega progressiva) optimitzant al màxim el rendiment de la CPU d'AWS.
+
+## 4. Configuració del Servidor de Vídeo Estàtic (Nginx)
+
+Per a la posada en marxa del reproductor web, vam carregar el fitxer a la memòria del servidor i vam verificar el seu accés a través de la configuració de Nginx. La ruta del fitxer va quedar definida de la següent manera:
+
+<img width="606" height="513" alt="image" src="https://github.com/user-attachments/assets/aae97e18-ac10-4c75-982d-5ab1a35a3e3e" />
+
+
+/var/www/html/video_empresa.mp4
+
+<img width="611" height="93" alt="image" src="https://github.com/user-attachments/assets/5358b03b-feef-42b7-ad55-36d06f684026" />
+
+
+A l'arxiu de configuració de Nginx (/etc/nginx/sites-available/default), ens vam assegurar que el directori arrel apuntés correctament i que els tipus de fitxer (MIME types) estiguessin ben enllaçats per a l'extensió .mp4. Això garanteix una descàrrega progressiva correcta, permetent que l'usuari pugui moure's lliurement per la línia de temps del vídeo des del navegador sense haver d'esperar que es descarregui completament.
+
+Error inicial de DNS amb el script de Let's Encrypt:
+
+En un primer moment, en llançar el script de Let's Encrypt utilitzant el subdomini inicial, el servidor de certificació ens retornava de forma persistent un error de tipus NXDOMAIN. Això passava perquè els servidors de validació global encara no tenien constància del registre ni de la IP dinàmica de la nostra instància de AWS.
+
+Configuració de la IP Elàstica a AWS:
+
+Per evitar que la IP pública canviés en reiniciar la màquina virtual, ens hem dirigit a la consola d'Amazon EC2 i hem assignat una Direcció IP elàstica (34.194.233.148), associant-la directament a la interfície de xarxa privada de la nostra instància (172.31.2.138).
+
+<img width="612" height="415" alt="image" src="https://github.com/user-attachments/assets/68d261d6-1a3e-44b4-bfe1-3487a71bf686" />
+
+
+Registre i redirecció amb Duck DNS:
+
+Com a alternativa per agilitzar la propagació dels servidors de noms, hem accedit a la plataforma Duck DNS amb el nostre compte. Allà hem creat el subdomini jitsigrupo6.duckdns.org i hem actualitzat el registre apuntant a la nostra IP elàstica de AWS. La plataforma ens ha confirmat l'èxit de l'operació a l'instant.
+
+<img width="602" height="460" alt="image" src="https://github.com/user-attachments/assets/98d46af5-33fe-47b0-9ceb-aa06e35ada7e" />
+
+
+Generació correcta del certificat SSL amb Let's Encrypt:
+
+Un cop fets els canvis de nom de l'amfitrió (hostname) a la màquina Linux i netejada la instal·lació, hem tornat a executar el script oficial de Jitsi per a la generació de certificats. Com es pot veure a la terminal, en utilitzar el nou domini de Duck DNS, la CA ha processat l'ordre correctament i ens ha tornat el missatge final de Cert success juntament amb el bloc de la clau pública.
+
+X<img width="596" height="460" alt="image" src="https://github.com/user-attachments/assets/76c4bc34-91f4-4b1c-ac2f-61a678a238dd" />
+
+
+Accés a la interfície de Jitsi Meet de forma segura:
+
+Hem comprovat l'accés web introduint la URL segura al navegador. La plataforma ens ha permès crear la sala de reunions sense mostrar cap avís de desconnexió ni de xarxa, confirmant que el servidor web Nginx i els serveis interns de Jitsi es comuniquen correctament.
+
+Videoconferència amb múltiples usuaris activa:
+
+Finalment, hem realitzat la prova de rendiment connectant diferents dispositius i usuaris a la mateixa sala (Aman i aaa). Com es pot observar a la captura, els fluxos de vídeo de les càmeres web es transmeten en temps real de manera fluida, els micròfons funcionen correctament i el canal de dades és totalment estable gràcies a la configuració dels ports i les propietats del NAT Harvester al pont de vídeo.
+
+<img width="613" height="461" alt="image" src="https://github.com/user-attachments/assets/e8b1b3a6-d1d1-4c9d-a697-c1ea2863a54f" />
+
+
+<img width="578" height="447" alt="image" src="https://github.com/user-attachments/assets/078cf446-b0a5-4eb9-97c1-02c179449e01" />
 
 
 
