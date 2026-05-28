@@ -1170,23 +1170,6 @@ SELECT * FROM taula_avisos ORDER BY data_hora DESC;
 | El rol `treballador` no es creava | La versió de MySQL Free Tier no suportava sintaxi de rols sense `@` | Crear el rol com `CREATE ROLE 'treballador'@'%'` |
 
 
-
-# Projecte Transversal ASIXc — InnovateTech
-
-## Índex
-
-1. [Introducció](#1-introducció)
-2. [Implementació del CPD al núvol AWS](#2-implementació-del-cpd-al-núvol-aws)
-3. [Configuració general de les màquines](#3-configuració-general-de-les-màquines)
-4. [EC2-WEB-SFTP](#4-ec2-web-sftp)
-5. [EC2-LDAP](#5-ec2-ldap)
-6. [EC2-LOGS](#6-ec2-logs)
-7. [EC2-ANSIBLE](#7-ec2-ansible)
-8. [EC2-BBDD](#8-ec2-bbdd)
-9. [Security Groups](#9-security-groups)
-10. [Captures a incloure](#10-captures-a-incloure)
-11. [Conclusió final](#11-conclusió-final)
-
 ---
 
 # 1. Introducció
