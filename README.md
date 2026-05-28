@@ -351,13 +351,29 @@ Finalment, hem realitzat la prova de rendiment connectant diferents dispositius 
 
 <img width="578" height="447" alt="image" src="https://github.com/user-attachments/assets/078cf446-b0a5-4eb9-97c1-02c179449e01" />
 
+## 2.4 Comprovacions d’amplada de banda
 
+Per complir amb els requeriments de rendiment del projecte, hem dut a terme proves de mesurament de l'amplada de banda i del rendiment de la xarxa. L'objectiu ha estat avaluar la capacitat de la nostra instància d'AWS EC2 per gestionar de manera eficient el tràfic de dades multimèdia (tant el streaming de vídeo amb Nginx com les connexions de Jitsi Meet).
 
+Per a aquest procés, hem utilitzat l'eina de diagnòstic de xarxa **iperf3**, la qual opera sota un model client-servidor per calcular els Mbps reals de transferència.
 
+### 1. Preparació del Servidor (AWS EC2)
+En primer lloc, hem accedit per SSH a la nostra instància d'Ubuntu Server i hem instal·lat el paquet necessari mitjançant el gestor d'APT:
 
+```bash
+sudo apt update && sudo apt install iperf3 -y
+```
+Un cop instal·lat, hem executat l'eina en mode servidor. D'aquesta manera, la màquina es queda a l'espera de rebre peticions de prova externs a través del port predeterminat (TCP 5201)
+```bash
+iperf3 -s
+```
+A continuació, hem obert la terminal del nostre ordinador personal i hem llançat el test de rendiment apuntant directament cap a la IP Elàstica (34.194.233.148) que tenim configurada al projecte
+```bash
+iperf3 -c 34.194.233.148
+```
+Com es pot observar als indicadors de Bandwidth, la taxa de transferència mitjana s'ha mantingut de forma constant per sobre dels 94 Mbps, presentant un índex de retransmissions (Retr) igual a zero.
 
-
-
+Aquestes mètriques ens confirmen que la infraestructura de xarxa d'Amazon Web Services i la configuració del nostre servidor són totalment estables. El canal disposa de prou amplada de banda per suportar correctament tant la descàrrega progressiva del fitxer video_empresa.mp4 a la web de Nginx com els fluxos d'àudio i vídeo bidireccionals en temps real dels múltiples usuaris de Jitsi Meet sense patir pèrdua de paquets ni degradació del servei.
 
 
 # 3. Disseny i Implementació de la Base de Dades
