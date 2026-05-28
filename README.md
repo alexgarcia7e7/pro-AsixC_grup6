@@ -1,5 +1,4 @@
 # pro-AsixC_grup6
-# pro-AsixC_grup6
 ## Índex
 
 * [1. Proposta de CPD](#1-proposta-de-cpd-centre-de-processament-de-dades)
