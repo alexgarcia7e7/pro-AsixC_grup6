@@ -261,7 +261,7 @@ Tot i que els tres *hyperscalers* presenten compromisos mediambientals excel·le
 3. **Robustesa en Seguretat Administrada:** AWS encapsula i gestiona directament tots els requisits de seguretat física dels seus centres de dades (controls d'accés biomètric, vigilància 24/7) i lògica (aïllament per defecte a nivell d'hipervisor), garantint el compliment automàtic de normatives internacionals crítiques com la **ISO 27001**, **SOC 2** i **PCI-DSS**.
 
 
-##2 Implantació dels serveis d'àudio i vídeo
+## 2 Implantació dels serveis d'àudio i vídeo
 # Integració de Serveis de Streaming i Videoconferència a AWS
 
 ## 1. Introducció i Objectius
