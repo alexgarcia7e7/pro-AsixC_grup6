@@ -1053,3 +1053,1258 @@ SELECT * FROM taula_avisos ORDER BY data_hora DESC;
 | L'event no s'executava | El planificador d'events estava desactivat per defecte | Executar `SET GLOBAL event_scheduler = ON;` |
 | Error de permisos en `SELECT INTO OUTFILE` | L'usuari MySQL no tenia permisos de sistema de fitxers | Afegir `GRANT FILE ON *.* TO 'root'@'localhost';` i crear el directori `/var/backups/mysql/` amb `mkdir -p` |
 | El rol `treballador` no es creava | La versió de MySQL Free Tier no suportava sintaxi de rols sense `@` | Crear el rol com `CREATE ROLE 'treballador'@'%'` |
+
+
+
+# Projecte Transversal ASIXc — InnovateTech
+
+## Índex
+
+1. [Introducció](#1-introducció)
+2. [Implementació del CPD al núvol AWS](#2-implementació-del-cpd-al-núvol-aws)
+3. [Configuració general de les màquines](#3-configuració-general-de-les-màquines)
+4. [EC2-WEB-SFTP](#4-ec2-web-sftp)
+5. [EC2-LDAP](#5-ec2-ldap)
+6. [EC2-LOGS](#6-ec2-logs)
+7. [EC2-ANSIBLE](#7-ec2-ansible)
+8. [EC2-BBDD](#8-ec2-bbdd)
+9. [Security Groups](#9-security-groups)
+10. [Captures a incloure](#10-captures-a-incloure)
+11. [Conclusió final](#11-conclusió-final)
+
+---
+
+# 1. Introducció
+
+En aquest projecte hem implementat un CPD al núvol utilitzant AWS. L’objectiu principal ha estat desplegar diferents serveis essencials per a InnovateTech, separant-los en màquines EC2 diferents per millorar l’organització, la seguretat i el manteniment.
+
+Els serveis desplegats són:
+
+* Servei web.
+* Servei de transferència segura de fitxers SFTP.
+* Servei de directori LDAP.
+* Servei de centralització de logs.
+* Controlador Ansible.
+* Base de dades MariaDB.
+
+Totes les màquines s’administren amb un usuari específic anomenat `adminitb`, evitant l’ús de l’usuari per defecte del sistema. L’accés a les màquines es realitza mitjançant clau pública i privada, sense utilitzar contrasenya.
+
+---
+
+# 2. Implementació del CPD al núvol AWS
+
+## 2.1 Màquines creades
+
+| Màquina | Nom a AWS    | Servei                   |
+| ------- | ------------ | ------------------------ |
+| 1       | EC2-WEB-SFTP | Servei web Apache i SFTP |
+| 2       | EC2-LDAP     | Directori actiu / LDAP   |
+| 3       | EC2-LOGS     | Centralització de logs   |
+| 4       | EC2-ANSIBLE  | Controlador Ansible      |
+| 5       | EC2-BBDD     | Base de dades MariaDB    |
+
+## 2.2 Configuració comuna de les instàncies
+
+Totes les instàncies EC2 s’han creat amb una configuració similar:
+
+* Sistema operatiu: Ubuntu Server.
+* Tipus d’instància: `t2.micro` o `t3.micro`.
+* Emmagatzematge: volum EBS.
+* Accés SSH amb clau privada `innovatetech.pem`.
+* Administració amb l’usuari `adminitb`.
+
+La clau privada utilitzada per connectar-se a totes les màquines és:
+
+```text
+innovatetech.pem
+```
+
+---
+
+# 3. Configuració general de les màquines
+
+## 3.1 Creació de l’usuari d’administració
+
+A cada màquina hem creat un usuari específic anomenat `adminitb`.
+
+```bash
+sudo adduser adminitb
+```
+
+Hem afegit l’usuari al grup `sudo`:
+
+```bash
+sudo usermod -aG sudo adminitb
+```
+
+Hem comprovat que l’usuari s’ha creat correctament:
+
+```bash
+id adminitb
+```
+
+## 3.2 Configuració SSH per a l’usuari adminitb
+
+Hem creat el directori `.ssh`:
+
+```bash
+sudo mkdir -p /home/adminitb/.ssh
+```
+
+Hem copiat les claus autoritzades de l’usuari `ubuntu`:
+
+```bash
+sudo cp /home/ubuntu/.ssh/authorized_keys /home/adminitb/.ssh/
+```
+
+Hem canviat el propietari:
+
+```bash
+sudo chown -R adminitb:adminitb /home/adminitb/.ssh
+```
+
+Hem aplicat permisos restrictius:
+
+```bash
+sudo chmod 700 /home/adminitb/.ssh
+sudo chmod 600 /home/adminitb/.ssh/authorized_keys
+```
+
+Després hem comprovat l’accés amb:
+
+```powershell
+ssh -i "C:\clave\innovatetech.pem" adminitb@IP_PUBLICA
+```
+
+## 3.3 Actualització del sistema
+
+A cada màquina hem actualitzat el sistema:
+
+```bash
+sudo apt update
+sudo apt upgrade -y
+```
+
+També hem instal·lat eines bàsiques:
+
+```bash
+sudo apt install nano curl wget net-tools ufw unzip -y
+```
+
+---
+
+# 4. EC2-WEB-SFTP
+
+## 4.1 Objectiu
+
+La màquina `EC2-WEB-SFTP` s’ha configurat per oferir dos serveis:
+
+* Servei web amb Apache.
+* Servei de transferència segura de fitxers amb SFTP.
+
+Aquesta és l’única màquina on hem agrupat dos serveis, ja que el projecte permet que el servei web i SFTP estiguin al mateix servidor.
+
+---
+
+## 4.2 Instal·lació d’Apache
+
+Hem instal·lat Apache:
+
+```bash
+sudo apt install apache2 -y
+```
+
+Hem configurat Apache perquè s’iniciï automàticament:
+
+```bash
+sudo systemctl enable apache2
+```
+
+Hem iniciat el servei:
+
+```bash
+sudo systemctl start apache2
+```
+
+Hem comprovat l’estat:
+
+```bash
+sudo systemctl status apache2
+```
+
+El servei ha d’aparèixer com:
+
+```text
+active (running)
+```
+
+---
+
+## 4.3 Creació de la pàgina web
+
+Hem editat el fitxer principal de la web:
+
+```bash
+sudo nano /var/www/html/index.html
+```
+
+Hem afegit el contingut HTML de la pàgina web d’InnovateTech.
+
+Després hem accedit des del navegador a la IP pública de la màquina per comprovar que la web funcionava correctament:
+
+```text
+http://IP_PUBLICA_EC2_WEB_SFTP
+```
+
+---
+
+## 4.4 Configuració del firewall intern
+
+Hem permès connexions SSH:
+
+```bash
+sudo ufw allow OpenSSH
+```
+
+Hem permès trànsit web:
+
+```bash
+sudo ufw allow "Apache Full"
+```
+
+Hem activat el firewall:
+
+```bash
+sudo ufw enable
+```
+
+Hem comprovat les regles:
+
+```bash
+sudo ufw status
+```
+
+---
+
+## 4.5 Configuració del servei SFTP
+
+Hem creat el grup per als usuaris SFTP:
+
+```bash
+sudo groupadd sftpusers
+```
+
+Hem creat l’usuari SFTP:
+
+```bash
+sudo adduser usuari_sftp
+```
+
+Hem afegit l’usuari al grup:
+
+```bash
+sudo usermod -aG sftpusers usuari_sftp
+```
+
+Hem creat l’estructura de carpetes:
+
+```bash
+sudo mkdir -p /sftp/usuari_sftp/upload
+```
+
+Hem configurat els permisos:
+
+```bash
+sudo chown root:root /sftp/usuari_sftp
+sudo chmod 755 /sftp/usuari_sftp
+sudo chown usuari_sftp:sftpusers /sftp/usuari_sftp/upload
+sudo chmod 755 /sftp/usuari_sftp/upload
+```
+
+---
+
+## 4.6 Limitació de l’usuari SFTP
+
+Hem editat el fitxer SSH:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Hem afegit al final:
+
+```text
+Match Group sftpusers
+    ChrootDirectory /sftp/%u
+    ForceCommand internal-sftp
+    AllowTcpForwarding no
+    X11Forwarding no
+```
+
+Hem comprovat la configuració:
+
+```bash
+sudo mkdir -p /run/sshd
+sudo sshd -t
+```
+
+Hem reiniciat SSH:
+
+```bash
+sudo systemctl restart ssh
+```
+
+Amb aquesta configuració, l’usuari `usuari_sftp` només pot utilitzar SFTP i queda limitat al seu directori.
+
+---
+
+## 4.7 Prova del servei SFTP
+
+Des de Windows hem creat un fitxer anomenat `prova.txt`.
+
+Hem accedit per SFTP:
+
+```powershell
+sftp -i "C:\clave\innovatetech.pem" usuari_sftp@IP_PUBLICA_EC2_WEB_SFTP
+```
+
+Dins de SFTP hem executat:
+
+```sftp
+pwd
+ls
+cd upload
+put C:\Users\Amanp\Desktop\prova.txt
+ls
+exit
+```
+
+Amb aquesta prova hem verificat que el servei SFTP funciona correctament i permet transferir fitxers de forma segura.
+
+---
+
+# 5. EC2-LDAP
+
+## 5.1 Objectiu
+
+La màquina `EC2-LDAP` s’ha configurat com a servidor de directori mitjançant OpenLDAP.
+
+Aquest servei permet gestionar usuaris i grups de manera centralitzada.
+
+---
+
+## 5.2 Instal·lació d’OpenLDAP
+
+Hem instal·lat OpenLDAP:
+
+```bash
+sudo apt install slapd ldap-utils -y
+```
+
+Hem reconfigurat OpenLDAP:
+
+```bash
+sudo dpkg-reconfigure slapd
+```
+
+Valors utilitzats:
+
+```text
+DNS domain name: innovatetech.local
+Organization name: InnovateTech
+Base LDAP: dc=innovatetech,dc=local
+Administrador: cn=admin,dc=innovatetech,dc=local
+```
+
+---
+
+## 5.3 Comprovació del servei LDAP
+
+Hem comprovat l’estat del servei:
+
+```bash
+sudo systemctl status slapd
+```
+
+Hem configurat el servei perquè s’iniciï automàticament:
+
+```bash
+sudo systemctl enable slapd
+```
+
+Hem fet una consulta LDAP:
+
+```bash
+ldapsearch -x -LLL -H ldap://localhost -b dc=innovatetech,dc=local
+```
+
+Aquesta consulta confirma que la base LDAP existeix i respon correctament.
+
+---
+
+## 5.4 Creació de l’estructura base LDAP
+
+Hem creat el fitxer `base.ldif`:
+
+```bash
+nano base.ldif
+```
+
+Contingut:
+
+```text
+dn: ou=users,dc=innovatetech,dc=local
+objectClass: organizationalUnit
+ou: users
+
+dn: ou=groups,dc=innovatetech,dc=local
+objectClass: organizationalUnit
+ou: groups
+```
+
+Hem importat el fitxer:
+
+```bash
+ldapadd -x -D cn=admin,dc=innovatetech,dc=local -W -f base.ldif
+```
+
+---
+
+## 5.5 Creació del grup SFTP a LDAP
+
+Hem creat el fitxer `grup-sftp.ldif`:
+
+```bash
+nano grup-sftp.ldif
+```
+
+Contingut:
+
+```text
+dn: cn=sftpusers,ou=groups,dc=innovatetech,dc=local
+objectClass: posixGroup
+cn: sftpusers
+gidNumber: 10000
+```
+
+Hem importat el grup:
+
+```bash
+ldapadd -x -D cn=admin,dc=innovatetech,dc=local -W -f grup-sftp.ldif
+```
+
+---
+
+## 5.6 Creació d’un usuari LDAP de prova
+
+Hem generat una contrasenya xifrada:
+
+```bash
+slappasswd
+```
+
+Hem creat el fitxer `usuari-prova.ldif`:
+
+```bash
+nano usuari-prova.ldif
+```
+
+Contingut:
+
+```text
+dn: uid=prova,ou=users,dc=innovatetech,dc=local
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: Usuari Prova
+sn: Prova
+uid: prova
+uidNumber: 10000
+gidNumber: 10000
+homeDirectory: /home/prova
+loginShell: /bin/bash
+userPassword: HASH_GENERAT
+```
+
+Hem importat l’usuari:
+
+```bash
+ldapadd -x -D cn=admin,dc=innovatetech,dc=local -W -f usuari-prova.ldif
+```
+
+Hem comprovat l’usuari:
+
+```bash
+ldapsearch -x -LLL -b dc=innovatetech,dc=local uid=prova
+```
+
+---
+
+## 5.7 Firewall LDAP
+
+Hem permès SSH:
+
+```bash
+sudo ufw allow OpenSSH
+```
+
+Hem permès LDAP des de la xarxa interna:
+
+```bash
+sudo ufw allow from 172.31.0.0/16 to any port 389 proto tcp
+```
+
+Hem permès LDAPS:
+
+```bash
+sudo ufw allow from 172.31.0.0/16 to any port 636 proto tcp
+```
+
+Hem activat el firewall:
+
+```bash
+sudo ufw enable
+```
+
+Hem comprovat l’estat:
+
+```bash
+sudo ufw status
+```
+
+Hem comprovat que LDAP escolta pel port 389:
+
+```bash
+sudo ss -tulnp | grep slapd
+```
+
+---
+
+# 6. EC2-LOGS
+
+## 6.1 Objectiu
+
+La màquina `EC2-LOGS` s’ha configurat per centralitzar els logs de les altres màquines del projecte.
+
+Hem utilitzat `rsyslog` per rebre logs remots per TCP i UDP al port 514.
+
+---
+
+## 6.2 Configuració de rsyslog
+
+Hem editat el fitxer principal:
+
+```bash
+sudo nano /etc/rsyslog.conf
+```
+
+Hem descomentat les línies següents:
+
+```text
+module(load="imudp")
+input(type="imudp" port="514")
+
+module(load="imtcp")
+input(type="imtcp" port="514")
+```
+
+Hem creat el fitxer de configuració per als logs remots:
+
+```bash
+sudo nano /etc/rsyslog.d/remote.conf
+```
+
+Contingut:
+
+```text
+$template RemoteLogs,"/var/log/remote/%HOSTNAME%/%PROGRAMNAME%.log"
+*.* ?RemoteLogs
+& stop
+```
+
+Hem creat el directori:
+
+```bash
+sudo mkdir -p /var/log/remote
+```
+
+Hem assignat permisos:
+
+```bash
+sudo chown syslog:adm /var/log/remote
+```
+
+Hem reiniciat el servei:
+
+```bash
+sudo systemctl restart rsyslog
+```
+
+Hem configurat l’inici automàtic:
+
+```bash
+sudo systemctl enable rsyslog
+```
+
+Hem comprovat l’estat:
+
+```bash
+sudo systemctl status rsyslog
+```
+
+---
+
+## 6.3 Comprovació del port 514
+
+Hem comprovat que `rsyslog` escolta al port 514:
+
+```bash
+sudo ss -tulnp | grep 514
+```
+
+---
+
+## 6.4 Firewall de EC2-LOGS
+
+Hem permès SSH:
+
+```bash
+sudo ufw allow OpenSSH
+```
+
+Hem permès logs per UDP:
+
+```bash
+sudo ufw allow from 172.31.0.0/16 to any port 514 proto udp
+```
+
+Hem permès logs per TCP:
+
+```bash
+sudo ufw allow from 172.31.0.0/16 to any port 514 proto tcp
+```
+
+Hem activat el firewall:
+
+```bash
+sudo ufw enable
+```
+
+Hem comprovat l’estat:
+
+```bash
+sudo ufw status
+```
+
+---
+
+## 6.5 Enviament de logs des de EC2-WEB-SFTP
+
+A la màquina `EC2-WEB-SFTP` hem creat el fitxer:
+
+```bash
+sudo nano /etc/rsyslog.d/60-central-logs.conf
+```
+
+Contingut:
+
+```text
+*.* @@IP_PRIVADA_EC2_LOGS:514
+```
+
+Hem reiniciat rsyslog:
+
+```bash
+sudo systemctl restart rsyslog
+```
+
+Hem generat un log de prova:
+
+```bash
+logger "LOG_TEST_WEB_SFTP cap a EC2-LOGS"
+```
+
+A la màquina `EC2-LOGS` hem comprovat l’arribada del log:
+
+```bash
+sudo grep -R "LOG_TEST_WEB_SFTP" /var/log/remote/
+```
+
+---
+
+## 6.6 Enviament de logs des de EC2-LDAP
+
+A la màquina `EC2-LDAP` hem creat el fitxer:
+
+```bash
+sudo nano /etc/rsyslog.d/60-central-logs.conf
+```
+
+Contingut:
+
+```text
+*.* @@IP_PRIVADA_EC2_LOGS:514
+```
+
+Hem reiniciat rsyslog:
+
+```bash
+sudo systemctl restart rsyslog
+```
+
+Hem generat un log de prova:
+
+```bash
+logger "LOG_TEST_LDAP cap a EC2-LOGS"
+```
+
+A `EC2-LOGS` hem comprovat:
+
+```bash
+sudo grep -R "LOG_TEST_LDAP" /var/log/remote/
+```
+
+Amb aquestes proves hem confirmat que `EC2-LOGS` rep correctament logs de les altres màquines.
+
+---
+
+# 7. EC2-ANSIBLE
+
+## 7.1 Objectiu
+
+La màquina `EC2-ANSIBLE` s’ha configurat com a controlador Ansible.
+
+Aquesta màquina permet automatitzar configuracions sobre altres servidors del projecte.
+
+---
+
+## 7.2 Instal·lació d’Ansible
+
+Hem instal·lat Ansible:
+
+```bash
+sudo apt install ansible -y
+```
+
+Hem comprovat la versió:
+
+```bash
+ansible --version
+```
+
+---
+
+## 7.3 Configuració de la clau privada
+
+Hem copiat la clau privada del projecte dins del controlador Ansible:
+
+```text
+/home/adminitb/innovatetech.pem
+```
+
+Hem aplicat permisos restrictius:
+
+```bash
+chmod 400 /home/adminitb/innovatetech.pem
+```
+
+---
+
+## 7.4 Creació del projecte Ansible
+
+Hem creat el directori:
+
+```bash
+mkdir -p ~/ansible-cpd
+cd ~/ansible-cpd
+```
+
+Hem creat el fitxer `inventory.ini`:
+
+```bash
+nano inventory.ini
+```
+
+Contingut:
+
+```ini
+[web]
+EC2-WEB-SFTP ansible_host=IP_PRIVADA_WEB ansible_user=adminitb ansible_ssh_private_key_file=/home/adminitb/innovatetech.pem
+
+[ldap]
+EC2-LDAP ansible_host=IP_PRIVADA_LDAP ansible_user=adminitb ansible_ssh_private_key_file=/home/adminitb/innovatetech.pem
+
+[logs]
+EC2-LOGS ansible_host=IP_PRIVADA_LOGS ansible_user=adminitb ansible_ssh_private_key_file=/home/adminitb/innovatetech.pem
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+```
+
+---
+
+## 7.5 Prova de connexió amb Ansible
+
+Hem executat:
+
+```bash
+ansible -i inventory.ini all -m ping
+```
+
+Resultat esperat:
+
+```text
+EC2-WEB-SFTP | SUCCESS => {
+    "ping": "pong"
+}
+
+EC2-LDAP | SUCCESS => {
+    "ping": "pong"
+}
+
+EC2-LOGS | SUCCESS => {
+    "ping": "pong"
+}
+```
+
+Aquesta prova confirma que Ansible pot connectar-se a les màquines gestionades.
+
+---
+
+## 7.6 Playbook per instal·lar eines bàsiques
+
+Hem creat el fitxer:
+
+```bash
+nano instalar-eines.yml
+```
+
+Contingut:
+
+```yaml
+---
+- name: Instal·lar eines bàsiques als servidors
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Actualitzar la llista de paquets
+      apt:
+        update_cache: yes
+
+    - name: Instal·lar paquets bàsics
+      apt:
+        name:
+          - nano
+          - curl
+          - wget
+          - net-tools
+          - ufw
+        state: present
+```
+
+Hem executat:
+
+```bash
+ansible-playbook -i inventory.ini instalar-eines.yml
+```
+
+---
+
+## 7.7 Playbook de comprovació de serveis
+
+Hem creat:
+
+```bash
+nano comprovar-serveis.yml
+```
+
+Contingut:
+
+```yaml
+---
+- name: Comprovar serveis principals del CPD
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Comprovar Apache a EC2-WEB-SFTP
+      shell: systemctl is-active apache2
+      register: apache_status
+      ignore_errors: yes
+      when: inventory_hostname == "EC2-WEB-SFTP"
+
+    - name: Mostrar estat Apache
+      debug:
+        msg: "Apache està {{ apache_status.stdout }}"
+      when: inventory_hostname == "EC2-WEB-SFTP"
+
+    - name: Comprovar OpenLDAP a EC2-LDAP
+      shell: systemctl is-active slapd
+      register: ldap_status
+      ignore_errors: yes
+      when: inventory_hostname == "EC2-LDAP"
+
+    - name: Mostrar estat LDAP
+      debug:
+        msg: "LDAP està {{ ldap_status.stdout }}"
+      when: inventory_hostname == "EC2-LDAP"
+
+    - name: Comprovar rsyslog a EC2-LOGS
+      shell: systemctl is-active rsyslog
+      register: logs_status
+      ignore_errors: yes
+      when: inventory_hostname == "EC2-LOGS"
+
+    - name: Mostrar estat rsyslog
+      debug:
+        msg: "Rsyslog està {{ logs_status.stdout }}"
+      when: inventory_hostname == "EC2-LOGS"
+```
+
+Hem executat:
+
+```bash
+ansible-playbook -i inventory.ini comprovar-serveis.yml
+```
+
+---
+
+## 7.8 Playbook per configurar logs amb Ansible
+
+Hem creat:
+
+```bash
+nano configurar-logs.yml
+```
+
+Contingut:
+
+```yaml
+---
+- name: Configurar enviament de logs cap a EC2-LOGS
+  hosts: web,ldap
+  become: yes
+
+  tasks:
+    - name: Instal·lar rsyslog
+      apt:
+        name: rsyslog
+        state: present
+        update_cache: yes
+
+    - name: Configurar servidor centralitzat de logs
+      copy:
+        dest: /etc/rsyslog.d/60-central-logs.conf
+        content: "*.* @@IP_PRIVADA_EC2_LOGS:514\n"
+
+    - name: Reiniciar rsyslog
+      service:
+        name: rsyslog
+        state: restarted
+        enabled: yes
+
+    - name: Generar missatge de prova
+      shell: logger "LOG_GENERAT_PER_ANSIBLE cap a EC2-LOGS"
+```
+
+Hem executat:
+
+```bash
+ansible-playbook -i inventory.ini configurar-logs.yml
+```
+
+A `EC2-LOGS` hem comprovat els logs generats per Ansible:
+
+```bash
+sudo grep -R "LOG_GENERAT_PER_ANSIBLE" /var/log/remote/
+```
+
+Aquesta prova confirma que Ansible ha configurat automàticament més d’una màquina.
+
+---
+
+# 8. EC2-BBDD
+
+## 8.1 Objectiu
+
+La màquina `EC2-BBDD` s’ha configurat com a servidor de base de dades MariaDB.
+
+La base de dades `innovate_tech` gestiona departaments, empleats, trucades, avisos, rols i triggers.
+
+---
+
+## 8.2 Security Group
+
+El Security Group de `EC2-BBDD` permet:
+
+| Tipus         | Port | Origen                |
+| ------------- | ---: | --------------------- |
+| SSH           |   22 | IP de l’administrador |
+| MySQL/MariaDB | 3306 | 172.31.0.0/16         |
+
+---
+
+## 8.3 Instal·lació de MariaDB
+
+Hem instal·lat MariaDB Server i MariaDB Client:
+
+```bash
+sudo apt install mariadb-server mariadb-client -y
+```
+
+Hem configurat l’inici automàtic:
+
+```bash
+sudo systemctl enable mariadb
+```
+
+Hem iniciat el servei:
+
+```bash
+sudo systemctl start mariadb
+```
+
+Hem executat l’assistent de seguretat:
+
+```bash
+sudo mysql_secure_installation
+```
+
+Durant l’assistent hem configurat:
+
+* Contrasenya de root.
+* Eliminació d’usuaris anònims.
+* Desactivació de l’accés remot de root.
+* Eliminació de la base de dades de prova.
+* Recàrrega de taules de privilegis.
+
+---
+
+## 8.4 Creació del script SQL
+
+Hem creat el fitxer:
+
+```bash
+nano /home/adminitb/innovate_tech.sql
+```
+
+Aquest fitxer conté:
+
+* Creació de la base de dades `innovate_tech`.
+* Creació de les taules.
+* Inserció de dades de prova.
+* Creació de rols.
+* Assignació de permisos.
+* Creació de triggers.
+
+Hem executat el script:
+
+```bash
+sudo mysql < /home/adminitb/innovate_tech.sql
+```
+
+---
+
+## 8.5 Comprovacions de la base de dades
+
+Hem entrat a MariaDB:
+
+```bash
+sudo mysql
+```
+
+Hem comprovat les bases de dades:
+
+```sql
+SHOW DATABASES;
+```
+
+Hem seleccionat la base:
+
+```sql
+USE innovate_tech;
+```
+
+Hem comprovat les taules:
+
+```sql
+SHOW TABLES;
+```
+
+Hem consultat els departaments:
+
+```sql
+SELECT * FROM departaments;
+```
+
+Hem consultat els empleats:
+
+```sql
+SELECT * FROM empleats;
+```
+
+Hem consultat les trucades:
+
+```sql
+SELECT * FROM trucades;
+```
+
+Hem comprovat els usuaris i rols:
+
+```sql
+SELECT User, Host FROM mysql.user;
+```
+
+Hem comprovat els permisos:
+
+```sql
+SHOW GRANTS FOR 'admin';
+SHOW GRANTS FOR 'vendes';
+SHOW GRANTS FOR 'administracio';
+```
+
+---
+
+## 8.6 Trigger de quotes
+
+Hem provat el trigger `tg_control_quotes` inserint diverses trucades per al mateix empleat en el mateix dia.
+
+Aquest trigger controla:
+
+* Límit de trucades diàries.
+* Límit de minuts mensuals.
+
+Quan s’ha superat el límit configurat, MariaDB ha bloquejat la inserció i ha mostrat un error.
+
+Això confirma que el trigger funciona correctament.
+
+---
+
+## 8.7 Firewall de EC2-BBDD
+
+Hem permès SSH:
+
+```bash
+sudo ufw allow OpenSSH
+```
+
+Hem permès MariaDB des de la xarxa interna:
+
+```bash
+sudo ufw allow from 172.31.0.0/16 to any port 3306 proto tcp
+```
+
+Hem activat UFW:
+
+```bash
+sudo ufw enable
+```
+
+Hem comprovat l’estat:
+
+```bash
+sudo ufw status
+```
+
+---
+
+## 8.8 Usuari remot per a aplicació interna
+
+Hem creat un usuari de base de dades anomenat `app_innovate`:
+
+```sql
+CREATE USER IF NOT EXISTS 'app_innovate'@'172.31.%' IDENTIFIED BY 'App1234.';
+GRANT SELECT, INSERT, UPDATE, DELETE ON innovate_tech.* TO 'app_innovate'@'172.31.%';
+FLUSH PRIVILEGES;
+```
+
+Aquest usuari podrà connectar-se des de la xarxa interna d’AWS i serà utilitzat per una possible aplicació web interna.
+
+---
+
+## 8.9 Permetre connexions internes de MariaDB
+
+Hem editat:
+
+```bash
+sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
+```
+
+Hem canviat:
+
+```text
+bind-address = 127.0.0.1
+```
+
+Per:
+
+```text
+bind-address = 0.0.0.0
+```
+
+Hem reiniciat MariaDB:
+
+```bash
+sudo systemctl restart mariadb
+```
+
+Hem comprovat que escolta pel port 3306:
+
+```bash
+sudo ss -tulnp | grep 3306
+```
+
+---
+
+# 9. Security Groups
+
+## 9.1 EC2-WEB-SFTP
+
+| Tipus      | Port | Origen                |
+| ---------- | ---: | --------------------- |
+| SSH        |   22 | IP de l’administrador |
+| HTTP       |   80 | 0.0.0.0/0             |
+| HTTPS      |  443 | 0.0.0.0/0             |
+| SSH intern |   22 | 172.31.0.0/16         |
+
+## 9.2 EC2-LDAP
+
+| Tipus      | Port | Origen                |
+| ---------- | ---: | --------------------- |
+| SSH        |   22 | IP de l’administrador |
+| LDAP       |  389 | 172.31.0.0/16         |
+| LDAPS      |  636 | 172.31.0.0/16         |
+| SSH intern |   22 | 172.31.0.0/16         |
+
+## 9.3 EC2-LOGS
+
+| Tipus      | Port | Origen                |
+| ---------- | ---: | --------------------- |
+| SSH        |   22 | IP de l’administrador |
+| Syslog TCP |  514 | 172.31.0.0/16         |
+| Syslog UDP |  514 | 172.31.0.0/16         |
+| SSH intern |   22 | 172.31.0.0/16         |
+
+## 9.4 EC2-ANSIBLE
+
+| Tipus | Port | Origen                |
+| ----- | ---: | --------------------- |
+| SSH   |   22 | IP de l’administrador |
+
+## 9.5 EC2-BBDD
+
+| Tipus         | Port | Origen                |
+| ------------- | ---: | --------------------- |
+| SSH           |   22 | IP de l’administrador |
+| MySQL/MariaDB | 3306 | 172.31.0.0/16         |
+
+# 10. Conclusió final
+
+Amb aquest projecte hem implementat un CPD al núvol AWS per a InnovateTech.
+
+Hem creat diferents màquines EC2, separant els serveis principals per millorar la seguretat, l’organització i el manteniment. La màquina `EC2-WEB-SFTP` ofereix servei web i transferència segura de fitxers. La màquina `EC2-LDAP` centralitza usuaris i grups. La màquina `EC2-LOGS` recull logs dels diferents servidors. La màquina `EC2-ANSIBLE` automatitza configuracions i comprovacions. Finalment, la màquina `EC2-BBDD` gestiona la base de dades del projecte amb MariaDB.
+
+També hem configurat usuaris específics d’administració, accés amb clau pública i privada, Security Groups, firewalls interns i serveis automatitzats amb Ansible.
+
+Per tant, el desplegament compleix els requisits principals del projecte i proporciona una infraestructura funcional, segura, escalable i documentada.
