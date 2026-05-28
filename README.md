@@ -1,41 +1,157 @@
 # pro-AsixC_grup6
 # pro-AsixC_grup6
+## Índex
 
-# 1. Proposta de CPD (Centre de Processament de Dades)
+* [1. Proposta de CPD](#1-proposta-de-cpd-centre-de-processament-de-dades)
 
-## Índex de Continguts
-* [1.1 Ubicació física i Acondicionament](#11-ubicació-física-i-acondicionament)
-  * [Criteris de Confidencialitat, Aïllament i Seguretat Estructural Perimetral](#criteris-de-confidencialitat-aïllament-i-seguretat-estructural-perimetral)
-  * [Climatització Avançada, Gestió del Flux d'Aire i Distribució en Planta](#climatització-avançada-gestió-del-flux-daire-i-distribució-en-planta)
-  * [Enginyeria i Segregació en Sòl Elevat i Sostre Tècnic](#enginyeria-i-segregació-en-sòl-elevat-i-sostre-tècnic)
-* [1.2 Infraestructura IT](#12-infraestructura-it)
-  * [Topologia de Xarxa Física i Flux de Comunicacions](#topologia-de-xarxa-física-i-flux-de-comunicacions)
-  * [Diagrama d'Estructura de Racks (Elevació de Rack de 42U)](#diagrama-destructura-de-racks-elevació-de-rack-de-42u)
-  * [Disseny i Ubicació dels Patch Panels en relació amb els Switches](#disseny-i-ubicació-dels-patch-panels-en-relació-amb-els-switches)
-  * [Gestió Estructurada de Cablejat (Horitzontal i Vertical)](#gestió-estructurada-de-cablejat-horitzontal-i-vertical)
-* [1.3 Infraestructura Elèctrica: Dimensionament del SAI](#13-infraestructura-elèctrica-dimensionament-del-sai)
-  * [Inventari de Consum Elèctric (Estudi de Càrregues)](#inventari-de-consum-elèctric-estudi-de-càrregues)
-  * [Càlcul de la Potència Requerida del SAI](#càlcul-de-la-potència-requerida-del-sai)
-  * [Selecció i Justificació del Model de SAI](#selecció-i-justificació-del-model-de-sai)
-  * [Càlcul d'Autonomia i Gestió d'Apagat Net](#càlcul-dautonomia-i-gestió-dapagat-net)
-* [1.4 Seguretat Física](#14-seguretat-física)
-  * [Control d'Accés de Doble Factor (2FA)](#control-daccés-de-doble-factor-2fa)
-  * [Sistemes de Videovigilància (CCTV)](#sistemes-de-videovigilància-cctv)
-  * [Prevenció i Protecció Contra Incendis](#prevenció-i-protecció-contra-incendis)
-  * [Vistes generals del CPD](#vistes-generals-del-cpd)
-* [Prevenció de Riscos Laborals (PRL) al CPD](#prevenció-de-riscos-laborals-prl-al-cpd)
-* [1.5 Sostenibilitat i Eficiència Energètica](#15-sostenibilitat-i-eficiència-energètica)
-  * [Monitorització i Consolidació Lògica](#monitorització-i-consolidació-lògica)
-  * [Subministrament d'Energia Verda](#subministrament-denergia-verda)
-  * [Disseny Físic i Arquitectura de Cablejat](#disseny-físic-i-arquitectura-de-cablejat)
-  * [Climatització Tèrmica i Circulació d'Aire](#climatització-tèrmica-i-circulació-daire)
-  * [Hardware i Components d'Alta Eficiència](#hardware-i-components-dalta-eficiència)
-* [1.7 Investigar i Comparar: Solucions Cloud i Sostenibilitat](#17-investigar-i-comparar-solucions-cloud-i-sostenibilitat)
-  * [Criteris Tècnics de Comparació](#criteris-tècnics-de-comparació)
-  * [Anàlisi per Proveïdor](#anàlisi-per-proveïdor)
-  * [Conclusió i Justificació de la Selecció d'AWS](#conclusió-i-justificació-de-la-selecció-daws)
+  * [1.1 Ubicació física i acondicionament](#11-ubicació-física-i-acondicionament)
 
----
+    * [Criteris de confidencialitat, aïllament i seguretat estructural perimetral](#criteris-de-confidencialitat-aïllament-i-seguretat-estructural-perimetral)
+    * [Climatització avançada, gestió del flux d’aire i distribució en planta](#climatització-avançada-gestió-del-flux-daire-i-distribució-en-planta)
+    * [Enginyeria i segregació en sòl elevat i sostre tècnic](#enginyeria-i-segregació-en-sòl-elevat-i-sostre-tècnic)
+  * [1.2 Infraestructura IT](#12-infraestructura-it)
+
+    * [Topologia de xarxa física i flux de comunicacions](#topologia-de-xarxa-física-i-flux-de-comunicacions)
+    * [Diagrama d’estructura de racks](#diagrama-destructura-de-racks-elevació-de-rack-de-42u)
+    * [Disseny i ubicació dels patch panels](#disseny-i-ubicació-dels-patch-panels-en-relació-amb-els-switches)
+    * [Gestió estructurada de cablejat](#gestió-estructurada-de-cablejat-horitzontal-i-vertical)
+  * [1.3 Infraestructura elèctrica: dimensionament del SAI](#13-infraestructura-elèctrica-dimensionament-del-sai)
+
+    * [Inventari de consum elèctric](#inventari-de-consum-elèctric-estudi-de-càrregues)
+    * [Càlcul de la potència requerida del SAI](#càlcul-de-la-potència-requerida-del-sai)
+    * [Selecció i justificació del model de SAI](#selecció-i-justificació-del-model-de-sai)
+    * [Càlcul d’autonomia i gestió d’apagat net](#càlcul-dautonomia-i-gestió-dapagat-net)
+  * [1.4 Seguretat física](#14-seguretat-física)
+
+    * [Control d’accés de doble factor](#control-daccés-de-doble-factor-2fa)
+    * [Sistemes de videovigilància](#sistemes-de-videovigilància-cctv)
+    * [Prevenció i protecció contra incendis](#prevenció-i-protecció-contra-incendio)
+    * [Vista exterior del CPD](#vista-exterior-del-cpd)
+    * [Vista interior del CPD](#vista-interior-del-cpd)
+  * [Prevenció de riscos laborals al CPD](#prevenció-de-riscos-laborals-prl-al-cpd)
+  * [1.5 Sostenibilitat i eficiència energètica](#15-sostenibilitat-i-eficiència-energètica)
+
+    * [Monitorització i consolidació lògica](#monitorització-i-consolidació-lògica)
+    * [Subministrament d’energia verda](#subministrament-denergia-verda)
+    * [Disseny físic i arquitectura de cablejat](#disseny-físic-i-arquitectura-de-cablejat)
+    * [Climatització tèrmica i circulació d’aire](#climatització-tèrmica-i-circulació-daire)
+    * [Hardware i components d’alta eficiència](#hardware-i-components-dalta-eficiència)
+  * [1.7 Solucions cloud i sostenibilitat](#17-investigar-i-comparar-solucions-cloud-i-sostenibilitat)
+
+    * [Criteris tècnics de comparació](#criteris-tècnics-de-comparació)
+    * [Anàlisi per proveïdor](#anàlisi-per-proveïdor)
+    * [AWS](#1-aws-amazon-web-services--solució-seleccionada)
+    * [Microsoft Azure](#2-microsoft-azure)
+    * [Google Cloud Platform](#3-google-cloud-platform-gcp)
+    * [Conclusió i justificació de la selecció d’AWS](#conclusió-i-justificació-de-la-selecció-daws)
+
+* [2. Implantació dels serveis d’àudio i vídeo](#2-implantació-dels-serveis-dàudio-i-vídeo)
+
+  * [2.1 Introducció i objectius](#1-introducció-i-objectius)
+  * [2.2 Arquitectura final dels serveis](#2-arquitectura-final-dels-serveis)
+  * [2.3 Evolució del desplegament i resolució d’incidències](#3-evolució-del-desplegament-i-resolució-dincidències)
+  * [2.4 Configuració del servidor de vídeo estàtic](#4-configuració-del-servidor-de-vídeo-estàtic-nginx)
+  * [2.5 Comprovacions d’amplada de banda](#24-comprovacions-damplada-de-banda)
+
+    * [Preparació del servidor AWS EC2](#1-preparació-del-servidor-aws-ec2)
+
+* [3. Disseny i implementació de la base de dades](#3-disseny-i-implementació-de-la-base-de-dades)
+
+  * [3.1 Context del projecte](#31-context-del-projecte)
+
+    * [Justificació del SGBD escollit](#justificació-del-sgbd-escollit)
+  * [3.2 Disseny i implementació de la base de dades](#32-disseny-i-implementació-de-la-base-de-dades)
+
+    * [3.2.1 Diagrama Entitat-Relació](#321-diagrama-entitat-relació-er)
+    * [3.2.2 Model relacional](#322-model-relacional)
+    * [3.2.3 Script de creació de la base de dades](#323-script-de-creació-de-la-base-de-dades)
+  * [3.3 Gestió d’usuaris, rols i permisos](#33-gestió-dusuaris-rols-i-permisos)
+
+    * [3.3.1 Creació de rols](#331-creació-de-rols)
+    * [3.3.2 Script de creació automatitzada d’usuaris](#332-script-de-creació-automatitzada-dusuaris-bash)
+    * [3.3.3 Triggers per al control d’accés i auditoria](#333-triggers-per-al-control-daccés-i-auditoria)
+    * [3.3.4 Events periòdics i còpies de seguretat](#334-events-periòdics--còpia-de-seguretat-automàtica)
+  * [3.4 Verificació i proves de la base de dades](#34-verificació-i-proves-de-la-base-de-dades)
+
+    * [3.4.1 Verificació de l’estructura de les taules](#341-verificació-de-lestructura-de-les-taules)
+    * [3.4.2 Verificació dels triggers actius](#342-verificació-dels-triggers-actius)
+    * [3.4.3 Verificació dels rols i permisos](#343-verificació-dels-rols-i-permisos)
+    * [3.4.4 Prova completa del flux de dades](#344-prova-completa-del-flux-de-dades)
+  * [3.5 Resum de l’arquitectura de la base de dades](#35-resum-de-larquitectura-de-la-base-de-dades)
+  * [3.6 Incidències i solucions](#36-incidències-i-solucions)
+
+* [4. Implementació del CPD al núvol AWS](#2-implementació-del-cpd-al-núvol-aws)
+
+  * [4.1 Màquines creades](#21-màquines-creades)
+  * [4.2 Configuració comuna de les instàncies](#22-configuració-comuna-de-les-instàncies)
+  * [4.3 Configuració general de les màquines](#3-configuració-general-de-les-màquines)
+
+    * [Creació de l’usuari d’administració](#31-creació-de-lusuari-dadministració)
+    * [Configuració SSH per a l’usuari adminitb](#32-configuració-ssh-per-a-lusuari-adminitb)
+    * [Actualització del sistema](#33-actualització-del-sistema)
+
+* [5. EC2-WEB-SFTP](#4-ec2-web-sftp)
+
+  * [Objectiu](#41-objectiu)
+  * [Instal·lació d’Apache](#42-instal·lació-dapache)
+  * [Creació de la pàgina web](#43-creació-de-la-pàgina-web)
+  * [Configuració del firewall intern](#44-configuració-del-firewall-intern)
+  * [Configuració del servei SFTP](#45-configuració-del-servei-sftp)
+  * [Limitació de l’usuari SFTP](#46-limitació-de-lusuari-sftp)
+  * [Prova del servei SFTP](#47-prova-del-servei-sftp)
+
+* [6. EC2-LDAP](#5-ec2-ldap)
+
+  * [Objectiu](#51-objectiu)
+  * [Instal·lació d’OpenLDAP](#52-instal·lació-dopenldap)
+  * [Comprovació del servei LDAP](#53-comprovació-del-servei-ldap)
+  * [Creació de l’estructura base LDAP](#54-creació-de-lestructura-base-ldap)
+  * [Creació del grup SFTP a LDAP](#55-creació-del-grup-sftp-a-ldap)
+  * [Creació d’un usuari LDAP de prova](#56-creació-dun-usuari-ldap-de-prova)
+  * [Firewall LDAP](#57-firewall-ldap)
+
+* [7. EC2-LOGS](#6-ec2-logs)
+
+  * [Objectiu](#61-objectiu)
+  * [Configuració de rsyslog](#62-configuració-de-rsyslog)
+  * [Comprovació del port 514](#63-comprovació-del-port-514)
+  * [Firewall de EC2-LOGS](#64-firewall-de-ec2-logs)
+  * [Enviament de logs des de EC2-WEB-SFTP](#65-enviament-de-logs-des-de-ec2-web-sftp)
+  * [Enviament de logs des de EC2-LDAP](#66-enviament-de-logs-des-de-ec2-ldap)
+
+* [8. EC2-ANSIBLE](#7-ec2-ansible)
+
+  * [Objectiu](#71-objectiu)
+  * [Instal·lació d’Ansible](#72-instal·lació-dansible)
+  * [Configuració de la clau privada](#73-configuració-de-la-clau-privada)
+  * [Creació del projecte Ansible](#74-creació-del-projecte-ansible)
+  * [Prova de connexió amb Ansible](#75-prova-de-connexió-amb-ansible)
+  * [Playbook per instal·lar eines bàsiques](#76-playbook-per-installar-eines-bàsiques)
+  * [Playbook de comprovació de serveis](#77-playbook-de-comprovació-de-serveis)
+  * [Playbook per configurar logs amb Ansible](#78-playbook-per-configurar-logs-amb-ansible)
+
+* [9. EC2-BBDD](#8-ec2-bbdd)
+
+  * [Objectiu](#81-objectiu)
+  * [Security Group](#82-security-group)
+  * [Instal·lació de MariaDB](#83-installació-de-mariadb)
+  * [Creació del script SQL](#84-creació-del-script-sql)
+  * [Comprovacions de la base de dades](#85-comprovacions-de-la-base-de-dades)
+  * [Trigger de quotes](#86-trigger-de-quotes)
+  * [Firewall de EC2-BBDD](#87-firewall-de-ec2-bbdd)
+  * [Usuari remot per a aplicació interna](#88-usuari-remot-per-a-aplicació-interna)
+  * [Permetre connexions internes de MariaDB](#89-permetre-connexions-internes-de-mariadb)
+
+* [10. Security Groups](#9-security-groups)
+
+  * [EC2-WEB-SFTP](#91-ec2-web-sftp)
+  * [EC2-LDAP](#92-ec2-ldap)
+  * [EC2-LOGS](#93-ec2-logs)
+  * [EC2-ANSIBLE](#94-ec2-ansible)
+  * [EC2-BBDD](#95-ec2-bbdd)
+
+
+* [11. Conclusió final](#10-conclusió-final)
 
 
 # 1. Proposta de CPD (Centre de Processament de Dades)
